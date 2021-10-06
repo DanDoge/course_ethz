@@ -42,3 +42,19 @@ hyperparameters of the cov functions
   - arguments for signal variance and noise variance are similar to BLR, problem: how does the noise and prior variance in BLR relate to GP
     - large noise variance will regulates weight more and lead to a more flat regression(inteprating all data points to noise and stick to prior), and low noise variance will degenerate to regular linear regression
     - large prior variance will means the prior has little effect for the regression, and vice versa
+
+decision theory and regression
+- define a loss function, which has nothing to do with density estimation
+- then min the expected risk w.r.t. the final output, not the model parameters
+
+replace MSE with SMSE, where each feature is normalized s.t. guessing the mean of targets will have a loss of 1
+- NLL can also be normalized by subtracting a gaussian ll from the train mean and variance data
+
+another view of GP
+- GP aims to reconstruct the underlying signal by removing noise
+  - linear smoother
+- SVD on prediction mean
+  - f = h^T y, where h is the weight function, outputs the weight applied to y for predicting target at point x
+  - equivalent kernel: suppose there are infinite observations on the x-axis -> we have a infinite dim kernel vector -> kernel function
+    - so you see the EK here is only derived from the SE kernel, regardless of training data
+  - more observations make a more frequent kernel
