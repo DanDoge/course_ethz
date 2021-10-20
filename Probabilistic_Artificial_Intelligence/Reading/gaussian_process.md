@@ -1,3 +1,5 @@
+### GPML Chapter 2.
+
 gaussian process: a distribution over functions
 - start at weight space
 
@@ -58,3 +60,20 @@ another view of GP
   - equivalent kernel: suppose there are infinite observations on the x-axis -> we have a infinite dim kernel vector -> kernel function
     - so you see the EK here is only derived from the SE kernel, regardless of training data
   - more observations make a more frequent kernel
+
+### GPML Chapter 4.
+
+stationary -> invariant to translations
+- while isotropic is invariant to rigid transformations
+  - aka. radial basis functions
+- network as a kernel function: some translation needed
+  - but still not a valid cov. function
+
+eigendecomposition of kernel functions
+- w.r.t. integration on some measure
+- a degenerate kernel will finite rank(number of non zero eigen values)
+- and thus the nyström approximation of the kernel function
+
+kernel for structure data
+- string kernel: in terms of occurance of some sub string
+- fisher kernel: define a generative model, and take the derivative
