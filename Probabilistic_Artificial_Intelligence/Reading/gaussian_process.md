@@ -77,3 +77,44 @@ eigendecomposition of kernel functions
 kernel for structure data
 - string kernel: in terms of occurance of some sub string
 - fisher kernel: define a generative model, and take the derivative
+
+### GPML Chapter 3.
+
+genertive model for classification p(x | y)
+- note that a strong prior is taken on conditional density and may not work well
+- while in discriminative case, we can turn a regression output to class distributions
+  - by using a response function, e.g. logistic regression, or any CDF in general
+
+decision theory
+- cost function: in medical cases, it can be asymmetric
+- rejection function: do not predict if we are uncertain for all classes
+  - or require the gap between first and second most possible class to exceed some threshold
+
+recall logistic regression
+- p(y | x, w) = sigmoid(y xt w)
+- assume gaussian prior on weights, we have log posterior
+  - not analytical, but concave
+  - note that a linearly separable dataset will lead to a infinity w 
+    - predict all correct labels with prob ~1.
+  - for ill-conditioned cases, e.g. linearly dependent
+    - then multiple solutions exist: w = Aw, suppose x = Ax
+
+GP for logistic regression
+- two steps
+  - p(f_new) = int of p(f_new | f_post) p(f_post | data) d f_post
+  - pred_new = int of sigmoid(f_new) p(f_new) d f_new
+  - and both of them are intractable
+- laplace approx
+  - q(f_post | data) = N(mu, sigma), where mu is argmax p(f_post | data), and sigma is the inverse of hessian
+  - note p(f_post | data) = p(y | f)p(f | X), with the latter being N(0, K), is the prior distribution
+    - take the log, set to zero, we get a self-consistent function f = K(d log(p(y | f)) df)
+    - apply Newton's method
+  - we have p(f_new) being a Gaussian with mu k(x_new) d log(p(y | f)) df
+    - note points that are well explained(with derivative small) have smaller impact towards to prediction, and points near the decision boundary(with high derivatives) will affect the predictions most
+      - similar to SVM
+  - variance is then the sum of two Gaussians, note the p = int p q is a convolution of Gaussians
+  - and then integrate to find prediction label
+    - note for binary cases, MAP prediction(sigmoid(E f)) and true averaged prediction(E sigmoid(f)) are identical
+      - in case of the confidence is of no interest, and only a prediction is needed
+      - in case of Gaussian sigmoid function, it is again tractable
+  - marginal likelihood can also be approximated using laplace method

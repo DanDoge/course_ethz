@@ -42,3 +42,16 @@ shrinkage and selection on multiple outcome predcitions
   - SVD of YtX / N
 - reduced rank regression: totally not readable, give up
 - miscellaneous, nothing much important
+
+### basis expansion
+
+cubic spline
+- 1, x, x2, x3, (x - e1)3, (x - e2)3
+  - each region fit a 4 parameter function, but each knots comes with 3 constraints(continuous second derivative)
+- very wild prediction outside of the boundary
+  - introducing natural cubic spline: linear beyond the boundary -> 4 deg of freedom freed
+- smoothing splines
+  - RSS = LSE + lambda curvature
+    - global minimizer with N knots -> note it is not a degenerate solution, because continuous derivatives has to be respected
+  - after some matrix representations, the analytical solution is some generalized ridge regression
+    - with numerical DoG being trace of smoothing matrix
