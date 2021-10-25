@@ -118,3 +118,4 @@ GP for logistic regression
       - in case of the confidence is of no interest, and only a prediction is needed
       - in case of Gaussian sigmoid function, it is again tractable
   - marginal likelihood can also be approximated using laplace method
+- expectation propagation: what?
