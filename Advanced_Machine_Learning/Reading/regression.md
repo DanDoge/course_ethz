@@ -55,3 +55,13 @@ cubic spline
     - global minimizer with N knots -> note it is not a degenerate solution, because continuous derivatives has to be respected
   - after some matrix representations, the analytical solution is some generalized ridge regression
     - with numerical DoG being trace of smoothing matrix
+
+### fisher linear discriminant
+
+project to C - 1 dimension
+- goal find w, s.t. the means are well separated and variance within class are minilized
+  - min (mu1 - mu2)^2 / (var1 + var2)
+- simple solution for 2-dim cases: w ~ S_W^-1 (mu2 - mu1)
+  - where S_W = sum of (x_i - mu_classi) (x_i - mu_classi)^T
+- probabilistic interpretation
+  - transform data by d-d matrix, fit a Gaussian with diag cov mat per class, where only first L cov are class specific
