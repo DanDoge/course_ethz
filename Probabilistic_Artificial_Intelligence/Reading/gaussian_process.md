@@ -119,3 +119,18 @@ GP for logistic regression
       - in case of Gaussian sigmoid function, it is again tractable
   - marginal likelihood can also be approximated using laplace method
 - expectation propagation: what?
+
+optimizing unknown noisy function
+- and optimize estimate over some high dim. space
+- problem, given noisy observation y = f(x) + eps
+  - goal: max. sum of f(x)
+  - metric: cumulative regret, not knowing max. f beforehead
+    - an algorithm with lim r(t) = 0 is said to have no regret
+  - modeling f as a GP
+- approach: estimate the function globally well, then explore maximum points
+  - measure a point by information gain: H(y) - H(y | f), randomness gained from knowing this point's value
+    - greedy find new points
+    - but in our case we only need f(x) to be large
+      - only exploring points with large function value will get stuck in moval maxima quickly
+      - conbined strategy: x = argmax mu(x) + beta sigma(x)
+    - some hard math for the bounds

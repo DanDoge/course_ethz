@@ -31,3 +31,8 @@ dropout for every layer
 - adding a set of binary variables for each node
 - variational distribution is by setting weight's column to zero with prob p
   - min KL loss from MC
+
+### uncertrainty in BDL
+
+predict label with variance
+- loss = diff / var + var
