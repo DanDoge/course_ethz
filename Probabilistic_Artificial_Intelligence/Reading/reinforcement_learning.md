@@ -27,5 +27,6 @@ dynamic programming
   - get value function for all states
     - iteratively... slow!
     - truncated after one step -> value iteration
+      - also can be viewed as a fix point iteration of Bellman equation
   - update policy from value functions
   - repeat
