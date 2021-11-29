@@ -30,3 +30,14 @@ dynamic programming
       - also can be viewed as a fix point iteration of Bellman equation
   - update policy from value functions
   - repeat
+
+temporal difference learning
+- constatnt-alpha MC: V(s) = V(s) + alpha(G_t - V(s)), where the G_t is the final return from step t, not available until the end
+- whereas TD uses the immediate return V(s) = V(s) + alpha(r_t+1 + gamma V(s') - V(s))
+  - and converges faster
+
+on policy appriximation of action values
+- many states are not visited -> some kind of reneralization required
+
+policy gradient
+- learn a parameterized policy w/o value function
