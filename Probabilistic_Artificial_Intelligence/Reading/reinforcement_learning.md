@@ -41,3 +41,12 @@ on policy appriximation of action values
 
 policy gradient
 - learn a parameterized policy w/o value function
+- partial J(theta) ~ sum_s mu(s) sum_a q_pi(s, a) partial pi(a | s, theta)
+  - where mu(s) is the proportion of time being in state s
+  - and for onpolicy senarios theta = theta + alpha G_t partial pi(A_t | S_t, theta) / pi(A_t | S_t, theta)
+  - can also include baselines theta = theta + alpha (G_t - b(S_t)) partial pi(A_t | S_t, theta) / pi(A_t | S_t, theta)
+    - can also use a learned state value function as baseline
+    - whereas the G is return from step t
+- one-step actor-critic
+  - theta = theta + alpha (r 1 gamma v(S_t+1, w) - v(S_t, w)) partial pi(A_t | S_t, theta) / pi(A_t | S_t, theta)
+  - v(S_t, w) is also learned

@@ -42,3 +42,6 @@ MC
 - Gibbs: sample one coordinate conditioned on other variables
   - a special case of MH, with prob of acc === 1
   - over relaxation: with Gaussain conditional (note, this is a larger family of distribution than joint Gaussian e.g. exp(1 + x1^2)exp(1 + x2^2))
+
+VAE
+- score function estimator for gradient fo ELBO
