@@ -16,4 +16,5 @@ f13 <- rep(c(rep(0, 11), 1), 12)
 
 reg <- lm(log(airline) ~ f1 + f2 + f3 + f4 + f5 + f6 + f7 + f8 + f9 + f10 + f11 + f12 + f13 - 1)
 
-plot(fitted(reg), residuals(reg))
+plot(reg, which=1)
+
