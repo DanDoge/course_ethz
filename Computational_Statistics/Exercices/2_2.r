@@ -11,7 +11,7 @@ data_comp <- data[complete.cases(data), ]
 reg <- lm(LifeExp ~ log2(People.per.Dr) + log2(People.per.TV), data_comp)
 print(summary(reg))
 
-new_data <- data.frame(log2(3000), log2(50))
+new_data <- data.frame(3000, 50) # note we have the log2 in the model
 names(new_data) <- c("People.per.Dr", "People.per.TV")
 print(predict(reg, new_data, interval = "confidence"))
 print(predict(reg, new_data, interval = "prediction"))

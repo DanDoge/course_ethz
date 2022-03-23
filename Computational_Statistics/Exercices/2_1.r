@@ -29,7 +29,11 @@ boxplot(cbind(data_dummy[data_dummy$p0 == 1, ]$longevity,
             data_dummy[data_dummy$p8t1 == 1, ]$longevity)
 )
 
-print(summary(lm(thorax ~ p0 + p1t0 + p1t1 + p8t0 + p8t1, data_dummy)))
+# use p0 as control group
+fitfull <- lm(thorax ~ p1t0 + p1t1 + p8t0 + p8t1, data_dummy)
+fitintercept <- lm(thorax ~ 1, data_dummy)
+# not significant, so null hypothesis: model is the same should be acc.ed
+print(anova(fitintercept, firfull))
 
 reg_wo <- lm(longevity ~ type, data1)
 print(summary(reg_wo))
