@@ -1,5 +1,7 @@
 missing 
-- machine percrption
+- machine perception
+    - lecture 0331
 - optim. data. sci.
-    - lecture 0314, 0315
-    - exercise wk3?
+    - lecture 0315
+- comp. stat.
+- comp. intel. lab
