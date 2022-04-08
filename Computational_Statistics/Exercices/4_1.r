@@ -43,7 +43,8 @@ lines(time, fitted(smo_spi))
 ksmo <- ksmooth(x_model, y_model, bandwidth = 0.16, x.points = x_model)
 
 plot(x_model, y_model)
-lines(ksmo$x, ksmo$y)
+lines(ksmo$x, ksmo$y) 
+# no actually should plot on evenly placed points in min(x), max(x)
 
 plot(time, y_model)
 lines(time, ksmo$y[order(ox)])
