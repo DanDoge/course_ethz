@@ -1,12 +1,11 @@
 missing 
 - machine perception
-    - lecture 0331, 0406
+    - lecture 0413 first 15min
 - optim. data. sci.
     - lecture 0315
-    - tutorial 0408
+    - tutorial 0408, 0412
 - comp. stat.
-    - lecture 0331, last 40min, conf. interval for skewed dist.?
-    - lecture 0407, 0408
-    - exercise 0408
+    - lecture 0428 first 1 hour
+    - exercise, tutorial demo
+    - lecture notes
 - comp. intel. lab
-    - exercise

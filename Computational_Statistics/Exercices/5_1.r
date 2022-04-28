@@ -42,7 +42,7 @@ loocv <- function(reg.data, reg.fcn)
 
 ### Regression prediction function for NW kernel:
 reg.fcn.nw <- function(reg.x, reg.y, x)
-  ksmooth(reg.x, reg.y, x.points = x, kernel = "normal", bandwidth = 5.0)$y
+  ksmooth(reg.x, reg.y, x.points = x, kernel = "normal", bandwidth = 4.0)$y
   
 ### Calculation of LOO CV-score for NW kernel estimator:
 (cv.nw <- loocv(reg, reg.fcn.nw))
@@ -60,7 +60,7 @@ for (j in 1:n) {
   
 ### Degrees of freedom (cf. Formula (3.6) in the lecture notes:
 (df.nw <- sum(diag(S.nw)))
-
+print(df.nw)
 
 ###################################################
 ### TASKS b) to e)
