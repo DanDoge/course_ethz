@@ -1,11 +1,14 @@
 missing 
 - machine perception
-    - lecture 0413 first 15min
+    - lecture 
 - optim. data. sci.
-    - lecture 0315
+    - lecture 0315, 0405
     - tutorial 0408, 0412
 - comp. stat.
-    - lecture 0428 first 1 hour
-    - exercise, tutorial demo
+    - lecture
+    - tutorial 
+    - exercise 7, 8
     - lecture notes
 - comp. intel. lab
+    - 
+    - where is the exercise?
