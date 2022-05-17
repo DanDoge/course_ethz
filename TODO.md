@@ -1,14 +1,16 @@
 missing 
 - machine perception
-    - lecture 
+    - lecture 0511, 0512
+    - exercise
 - optim. data. sci.
-    - lecture 0315, 0405
+    - lecture 0315, 0405, 0516, 0517
     - tutorial 0408, 0412
+    - ga 3
 - comp. stat.
     - lecture
-    - tutorial 
-    - exercise 7, 8
+    - tutorial 0513
+    - exercise 7, 8, 9
     - lecture notes
 - comp. intel. lab
-    - 
-    - where is the exercise?
+    - lecture
+    - where is the exercise -> done
