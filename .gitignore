@@ -2,7 +2,10 @@ Reliable_and_Trustworthy_Artificial_Intelligence/Exercises
 Probabilistic_Artificial_Intelligence/Demo
 Advanced_Machine_Learning/Projects
 DL_for_CV_seminar/
+Computational_Statistics/Additional_Materials
 # Reliable_and_Trustworthy_Artificial_Intelligence/Projects
+
+*.dat
 
 
 # Byte-compiled / optimized / DLL files
