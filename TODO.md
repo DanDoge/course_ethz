@@ -1,14 +1,3 @@
 missing 
-- optim. data. sci.
-    - lecture 0315, 0405
-    - tutorial 0408, 0412
-- comp. stat.
-    - lecture
-    - tutorial
-    - exercise 11, 12
-    - lecture notes
-- comp. intel. lab
-    - lecture
-    - tutorial
-    - where is the exercise -> done
-- everything last week
+- big data
+  - lecture 0921, 1004
