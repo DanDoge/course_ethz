@@ -284,3 +284,146 @@ data model and validation
   - JSON schema: "key": false --> forbid a field
     - also possible to combine validation check "anyOf": [{"type": "foo"}, {"type": "bar"}], similarlly "allOf", "oneOf", "not"
       - in JSound: "foo|bar" support only
+- xml validation
+  - all elements in XMLSchema namespace, recommend declaring as xs, xsd
+  - top element xs:schema
+  - inside: <xs:element name="foo" type="xs:string">
+  - extra wtire spaces, newlines and indentation are fine
+  - builtin types: strings(incl. xs:anyURI), numbers, datetimes, time intervals, binary, bolleans, null does not exist
+  - define user-defined atomic types
+    - <xs:simpleType name="foo">
+  - complex types: 
+    - complex content(nested no tex nodes with direct children)
+    - simple content(no nexted elements, text attributes possible)
+    - empty content: no nested no text, attributes possible
+    - mixed content: can nest, can text
+  - attribute: <xs:attribute> can have default in case of missing
+  - xml schema are also xml, valid against xml "meta" schema, which is valid against itself
+- data frames: forbid open object types, forbid schemas that allow too permissive or allow any values, allow for null and absent values
+  - relational tables are df, df can nest btu homogeneous
+- data formats
+  - for a valid df, different formats: parquet, avro, root, protocol buffers
+    - space efficent: smaller, performance efficnet: fast to read
+    - schema stored as a header, do not need repeat, compressing
+    - parquet: columnar fashion, grouping values with same key
+  - data formats classification: whether valid against df schema; whether nest; whether textual
+
+massive parallel processing
+- jsonl: one json per line
+- hadoop sequence file: list of kv, not sorted(but ordered), keys not unique --> generated with mapreduce
+- while hdfs, s3 support intra file parallelism, practically use many-files patterns
+  - convenient for mapreduce, easier to down/upload
+- mapreduce
+  - map phase on entire input, shuffle another map producing output
+  - input, intermediate, output all large collection of kv pairs(not unique k, not sorted by k), type knwon at complie time, common that intermediate and output types are same
+  - partition input into splits, mapping, shuffle and group by key, reduce(one call per key)
+  - arch:
+    - input from cloud, hdfs, wide column store
+    - (original mapreduce) jobtracker, tasktracker
+      - using hdfs, usually there is replica of block on tasktracker/datanode
+      - in map phase, intermediate pairs flushed to disk(LSMT of sequence files)
+        - then open http wait for connection, shuffling can start before map over, reduce can only start after map
+    - mapping files to pairs: each line/multiple line as a value, key being offset, or things befoer sepatare char. being key, after being value
+    - optimization: conbining in map phase
+      - often, same as reduce: intermediate kv same as output kv
+      - reduce function is both associative and commutative
+  - terminology: mapper reducer only used when naming classes
+    - map function, map task, map slot, map phase
+    - task: an assignment consisting series of calls of map function, sequentially
+      - no combine task
+    - slot: cpu core and some memory, each slot process tasks sequentially
+    - paralleism across slots: phases
+- first version mapreduce: mapslots and reduce slots preallocated
+- hdfs blocks at most 128mb, but kv pairs in a split may spread across two blocks remote call possible --> hdfs api can read a block partially
+
+resource management
+- limintation of mapreduce: jobtracker doing resource management, scheduling, monitoring, job lifecycle and fault tolerance
+  - not scale, bottlenect at jobtracker, difficult to do things well, static resource allocation
+- yarn
+  - resource manager, node managers(provide slot known as containers)
+  - rm assign one container as application master running the application, am communicate with rm to book and use more container
+  - several apps can run concurrentla in teh same cluster
+  - mapreduce, spark nto designed for singel user running one job, but optimize resource use and cost
+  - resource management: am can request and release container at any time, granted by rm fully or partially, by signing and issuing container token to ap, then am connect nm with the token, then ap ships code and param
+  - rm can also issue token to external clients, s.t. they can start am
+  - version2 of mapreduce: job lifecycle management to am. container can contain several map slots(save latency of seting up container)
+    - am allocating containers when end of map phase approaches, map containers released when reduce slots start processing
+    - am rerequest containers when map container fail, when reduce container fail, may have to restart job again
+    - scheduling: nm, am send heartbeats to rm
+      - strategies: fifo, capacity(quota per division), 
+      - fair scheduling(dynamic decisions)
+        - steady fair share, instantaneous fair share, current share
+        - dominant resource fairness algo: calc donimant resource percentage, and allocate on this dimension
+
+generic dataflow management
+- resilient distributed datasets
+  - resilient: in mem or on disk , recomputed if needed
+  - distributed: partitioned and spread over multiple machines
+  - collection fo anything: values within same RDD share same static type, generalization of mapreduce
+  - lifecycle: created from local disk, cloud storage, from file system or from mem
+    - transformation: rdd -> rdd
+      - unary: filter(rdd --> remain? true/false, preserving teh relative order), map(rdd --> single rdd), flatMap(rdd --> rdd*, map in mapreduce), distinct, sample
+      - binary: union, intersection, subtraction
+      - pair transformation(for kv pairs): key(take the key), value, reducebykey(given a binary opeartor, required to give neutral element for empty partition, reduce of mapreduce), groupbykey(key --> list of values), sortbykey(fiven order on the key), mapvalues(map function applied to values only), join(match pairs with same key and return key -> {val1, val2}, if multiple keys, all combinations are output), subtractbykey(remove keys appeared in the right) 
+    - action: rdd  -> storage  or screen
+      - collect: downloads all values to client machine, output as local list(only do this if small)
+      - count: computes total number of values(in parallel)
+      - count by value(only do this if small number of distunct values)
+      - take: return first n
+      - top: return last n
+      - take sample
+      - reduce: normally required to give neutral element
+      - saveastextfile/saveasobjectfile: for spark, format up to user 
+      - actions for pair rdd: countbykey, lookup(given key)
+  - lazy evaluation: creation and transformation on their own do nothing, with action the entire computation is put into motion
+- arch
+  - narrow-dependency transformation: parallized, no communication, e.g. map, flatmap, filter. local read hdfs(short-circuiting), sequential calls of tranfromation function: task --> assigned to slots: cores in yarn containers(containers called executors), processing sequential within each slot(one or more per executor), in parallel across executors
+    - chains of them: in the same slot, there is a single set of tasks for entire chain of transformations, called stage(correspond to a phase in mapreduce)
+  - shuffling
+    - wait for completion of other slots
+    - typically linear succession of stages on physical level(topo sort)
+  - optimizations: 
+    - pinning rdd: pin intermediate rdd if the comp. graph share a subgraph, in case we have the mem/disk for that
+    - pre-partitioning: remove shuffling if they are already in order
+- dataframes in spark
+  - df as specific kind fo rdd: rdd of rows, with relational integrity, domain integrity, not necessarily atomic integrity
+  - df stored columnwise in mem, attribute name not repeated, --> more compact
+    - and optimized, e.g. not reading a col if not used
+  - no free lunch: infer the schema from json files/csv/parquet(with a declared schema)
+  - spark sql or dataframe transformation api: no guarantee execution order
+  - df structured types: arrays, structures(string key), maps(all val same type)
+- skip sparksql: refer to notebooks
+
+document stores
+- typically specializes in eother json or xml
+- optimized for many records of small ro medium sizes
+- do selection projetion, aggregation and sorting well, but not join
+- mongodb: storage BSON: less space, support for additional type
+  - auto add distinct _id
+  - skip again mongodb code
+  - projection: find({condition}, {"things need": 1, "od not need": 0})
+  - sort: .sort({"asc": 1, "dsc": -1})
+  - again order of calls does not matter
+  - absent fields: .find({"foo": null})
+  - sort fields with diff. types: order of types
+  - use dot syntex ofr nested search "foo.bar", {"foo" : "bar"} looks for exact match
+    - for array, look for .any()
+  - complex pipelines
+- arch: sharding by selecting one or several fields(ordered) intervals
+  - replica set: set of nodes running mongodb server, nodes iwthin same replica all have copy of same data, each shard assigned to exactly one replica set
+  - writing: mondb checks specific min. number of nodes(in the same replica) have updated, then user call returns, then replication continues in the bg(async)
+  - index: find/range queries, built requested by user, sync or async
+    - hash indices: optim. point queries, O(1), consume space(to avoid collisions), no range queries(looking up every value, impissible for decimal or double), foo.createIndex({"bar": "hash"})
+    - tree: B+tree, node size fo a block
+      - all leaves exactly same depth, number of children within interval(d+1, 2d+1, except root(2, 2d+1) or 0), list of values interlaced with pointer to children(d, 2d) of them
+      - all values on leaves iwth a pointer to docs, value can repeat on non-leaf nodes for comparison purposes
+      - typically chain all leaves for traversals(support min/max only range query)
+      - split and incease depth(if needed) when inserting, and merge when deleting
+      - logn lookup
+    - secondary index: tree index for _id
+      - e.g. having index ABCD, then index for A, AB, ABC are useless
+
+querying denormalized datasets
+- skip JSONiq
+- data-independent layer on top of datalakes and ETL DBMS
+- query lang: declarative, functional, set-based
