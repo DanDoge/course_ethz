@@ -1,0 +1,17 @@
+- data totality: 
+- parallel and batch processing: why?
+- data definition language
+- C in ACID and CAP
+- rack units
+- spark transformation for projection
+- semi structured documents: normal form?
+- xml attributes: data structure?
+- mongodb replica set contain all data in collection?
+- write concern in mongodb
+
+- hdfs: flat storage file system?
+  - optimized for batch processing?
+  - read: addr of datanode sorted by proximity?
+  - read: client signal read finished?
+- hbase: deletion how?
+- spark: fault tolerance?
