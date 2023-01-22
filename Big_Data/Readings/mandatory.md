@@ -58,7 +58,7 @@ read only nested data
 - required, repeated, optional
 
 nestd columnar storage
-- repetition levels: how many things are repeated(w.r.t. previous one)
+- repetition levels: how many repeated fields are repeated(w.r.t. previous one)
   - adding null if things are totally missing
 - definition level: how many things are defined(repeated or optional)
 - finite stage machine fro reading, traverse from st to ed per record
@@ -88,7 +88,7 @@ relational olap: fact table + star schema
 ### textbook
 
 V: volume, variety and velocity
-- volume: KMGTPEZY
+- volume: KMGTPEZY, m mu n p
 - variety: trees, unstructures, cubes, graphs, tables
 - velocity: capacity, throughput, latency
   - capacity -- throughput: parallel, batch processing
@@ -100,6 +100,12 @@ atomic integrity: no nested collections/sets/lists
 relational algebra
 - projection: select columns, selection: select rows
 - grouping or aggregation
+- selection --> sigma
+- projection --> pi
+- grouping: gamma
+- renaming: pho
+- cartesian project: X
+- joins: triangles
 
 normal form
 - first normal form: atomic integrity
@@ -427,3 +433,6 @@ querying denormalized datasets
 - skip JSONiq
 - data-independent layer on top of datalakes and ETL DBMS
 - query lang: declarative, functional, set-based
+
+amdahl --> constant prob. size
+- gustafson --> 1 - p + sp, constant computing power

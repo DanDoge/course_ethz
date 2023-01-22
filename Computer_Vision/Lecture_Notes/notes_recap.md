@@ -8,6 +8,89 @@ projective geometry
   - translation: 2dof, rigid: 3dof(R, t), similarity: 4dof(sR, t), affine: 6dof(A_2*3), proejctive 8dof(up to scale)
 - perspective projection
   - K [R, t]
+- conics: x^T C x = 0 --> 5 point definition
+  - tangent line: l = Cx
+  - dual conics: l^T C^-1 l = 0
+  - degenerate conic: C = lm^T + ml^T or C = ll^T
+- projective transformations: invertible mapping s.t. x, y, z on same line iff x' y' z' on same line
+  - iff exists non singular H s.t. h = Hx, 8DoF
+  - projectivity = collineation = projective transformation = homography
+  - x' = Hx --> 2 equations --> 4 points for 8DoF
+- gold standard algo.: optimal cost function for some assumptions, the algo that min. such cost
+- direct linear transfromation
+  - x' X Hx = 0 --> Ah = 0, 2 eq per point --> for four points Ah = 0, A_8*9
+    - not intersting solution h = 0, pick some with |h| = 1
+    - for over determined min |Ah|
+    - or assume h_9 = 1, but ill condition if h_9 = or close to 0
+      - if h_9 = 0: origin mapped to infty
+  - degenerate configurations
+- cost functions
+  - algebratic distance: |Ah|, not geometrically meaningful, but givne good normalization it works fine and fast
+  - geometric distance: min sum d(x', Hx)^2, in terms of image coordinates
+    - or symmetric tranfer(x --> Hx', x' --> H^-1 x) error, reprojection error(x --> y, x' --> y')
+    - for affinities, DLT will min. geometric distance, d = d_alg / w w'
+  - stat. cost function and MLE
+    - optimal cost function w.r.t. noise model(in terms of reprojection error)
+    - general gaussian case: measure X with cov. Sigma
+- transformation of lines: l = H^-T l, C = H^-T C H^-1
+  - fixed ponts: He = lamda e, fixed lines H^-T l = lambda l
+  - projective 8dof, affine 6dof(invariants: line at infinity(as a line, not pointwise)), similarity 3dof(circular points) euclidean 3dof(length areas)
+  - circular points: (1, +-i, 0)
+  - dual conic C_infty is fixed iff H is similarity, 4dof, (100, 010, 000)
+- 3D points and planes
+  - planes from points: pi^T [x1, x2, x3] = 0
+  - lines: W = [A^T, B^T], W^* for dual representation, W^* W^T = 0
+  - quadrics: X^T Q X = 0, 9dof
+  - proejctive: 15dof
+  - affine: 12dof --> fix the infinite plane
+  - similarity: 7dof --> fix absolute conic
+  - euclidean: 6dof
+- camera models
+  - points --> points, line --> lines, plane --> whole image or half planem polygon --> ploygon
+  - back projection of line: Pi = P^T l
+  - back proejction to cone: Q = P^T C P
+  - projection to conic: C^* = PQ^*P^T
+- solve for P
+  - -DLT: x = PX --> x_X PX = 0 --> 2 eq, P has 11dof --> 6points
+    - over determind --> SVD
+    - degenerate config: points on a plane, camera adn points on twisted cubic
+    - normalization: scale to order 1
+    - DLT for lines: l^T P X --> 2 eq per point
+  - gold standard algo: normalization, DLT --> min geometric error d(x, PX)^2, denormalization
+  - or min error in image and world
+  - restricted cam estimation: fit that has s = 0, sqare pixel, principal points known
+    - impose constraint by parametrization(geometric error)
+    - assmme p = g(q), min |Ag(q)|(algebratic error)
+    - or use dlt, impose soft constraints, gradually increase weights
+
+epipolar geometry
+- epipoles, epipolar plane, epipolar line
+- x'^T F x = 0: unique 3*3, rank2  matrix
+  - Fe = 0, 7dof, correlation, projective mapping from x to a line Fx
+  - F = e'_X P' P^+, for pure translation, F 2dof
+  - has a projective ambiguity --> all reconstructions are projectively equivalent
+  - 8point algo. --> need normalization
+  - 7point algo, 2-dim solution space, find one with rank2 --> 1 or 3 solutions
+- for calibrated case: E = t_X R
+  - singular, two equal non-zero singular values
+  - 5points --> 4 dim splution space
+- triangulation: lambda x = P x --> P_3 X x_i = P__i X --> 2 eq per point
+- trifocal geometry: x = l_x X l_y
+  - l_x^T P X = 0, ... --> 2 eq per cam per point
+  - in total 4 eq will work for 4 dim point --> det(eqs) = 0
+    - oen line from a cam
+
+structure from motion
+- initialize motion, init sturcture, extend motion, extend structure
+- newton iteration: delta = (J^TJ)^-1J^T e_0
+  - levenberg marquardt: N' delta = J^T e_0
+    - N' = J^T J + lambda diag(J^T J)
+    - small lambda --> newton(quad convergence)
+    - large lamnda --> descent(guaranteed decrease)
+- bundle adjustment: hard non-linear min
+  - many parameters, poor conditioning, lots of outliers, gauge freedom
+  - robust error models --> outlier rejection
+  - exploiting sparsity
 
 local features
 - require region extraction to be repeatabel and accurate
@@ -53,3 +136,109 @@ deep learning
 - logistic reg. sum -y log y^ - (1 - y) log (1 - y^)
 - smaller bs --> larger var
 - batches randomly or partitioning dset, as independent as possible --> shuffle dset
+- recoginition
+  - template matching: occlusion, change in angle, artiuclation of parts
+  - bag of words: object as collection of local features
+    - image --> vector of count over each word
+    - BOW pipeline: extracting feature from images --> learn visual words using clustering(K-means) --> build BOW for wach image --> train and test using BOW
+      - flexible to geometry, deformation, viewpoint, compact summary, fixed dimensional vector representation, BGFG mixed, optimal vocab. unclear, ignores geometry
+      - small vocab size: nor representative, too large: quantization artifacts, overfitting
+    - invert index: feature --> image map
+      - require sparsity
+      - then at test time: test image --> feature --> train images
+  - precision and recall: precision(tp / tp + fp), recall(tp / tp + fn)
+    - then auc: order results and count precision and recall
+- object recognition: object model --> hypothesis --> score these --> resolve detections
+  - nonmax suppression: iou > something, supress lower score ones
+- sliding window face detection with viola jones
+  - integral image for fast feature evaluation
+    - rectangle filters
+  - boosting for feature selection
+    - using subset of features --> strong classifier
+    - loop: add a weak classifier with lowest training error, reweighting traning samples
+
+segmentation
+- k-means(in terms of pixel values)
+  - feature space: 1d, 3d or add filters or add coord.
+  - pro: simple, fast, local min.
+  - con: setting k? sensitive to initialization, sensitive to outliers, only spherical clusters, assume means can be computed
+- mixture of gaussians
+  - EM: E prob. of x in blob b, M compute other things
+  - pro: prob. interpretation, soft assignment, generative model, compact storage O(Kd^2)
+  - con: initialization required, local min. k?, choose blob generative model, numerical problem
+- mean shift
+  - shift to the mean of region of interest
+  - pro: general, model free, single param., find number of modes, robust to outliers
+  - con: h? not trival, computational expensive, does not scale with feature space dim.
+- hough transform
+  - detect lines: for point(x, y), all lines have y = ax + b
+  - time consuming, robust to outliers, peak detection difficult, can do it for circles or higher order shapes
+- markov field: energy = sum unary potentials + sum pairwise potentials
+  - min cut in graph, node - s link being expected intensities of object/BG
+  - only globally min. bin energies that are submodular
+- KNN
+  - pro: simple to implement, efficient implementation, distance definition flexible
+  - con: depends on definitions and k, keey entire data, curse of dim., generalization
+- CNN
+  - drawbacks: lot computation, lot data
+  - transfer learning: pretraining on related task/dataset --> finetuning on target problem
+  - hypercolumns: take activation from each levels(interpolate if necessary), concat/sum, then classify
+    - transfer image classification model to segmentation
+    - coarse boundries
+  - fcn
+    - transposed conv, layer fusion(concat)
+    - upsample twice, crf to refine(fcn output as unary term and edge-aware for pairwise term)
+    - pro: effective, sharp results, con: post-hoc processing, manually params.
+  - unet
+  - segnet
+    - max pooling indices ofr upsampling
+  - without downsampling? --> dialation
+    - exponential receptive field
+  - dense layer aggregation: what?
+  - context module
+  - attention
+
+detection
+- generalized hough transform(implicnt shape model)
+  - learn a appearance codebook, star topology structural model
+  - visual vocab with displacement vector
+  - pro: works well for diff. obj. catgories, flexible geometric model
+  - con: need supervised data, weak geometric constrainss, purely representative model.
+- RCNN
+  - image --> region proposals --> warped region --> CNN features --> classify
+  - classification and prefiction of 2d box
+  - ad hoc training objective, slow train/test, takes a lot of space
+- fast RCNN
+  - image --> featuremap --> roi pooling --> classify+bbox
+- faster RCNN: region proposal network for regions, not external algorithm
+  - also classification and bbox regression loss for RPN
+  - k anchore boxes per sliding window --> 2k scores and 4k coordinates
+- YOLO
+  - image --> S*S grid, B (bbox + score) + C conditional class prob per grid
+  - non-max suppression
+- feature pyramid networks
+  - predictions made at all levels
+- segmentation
+  - mask RCNN: adding a branch for predicting
+    - ROI align: bilinear interpolation for pooling
+  - dense pose: add keypoints, UV things
+
+tracking
+- track a points: E(h) = (I(x + h) - I(x))^2
+  - need nonzero gradient in all directions(aperture problem, local minima)
+- track a box: E(p) = sum_vectorx (I(W(x, p)) - T(x))^2
+  - lucas-kanade: descent on transformation p
+  - pro: handle different param. space, converge fast
+  - con: not robust to noise or large displacement, some transformation impossible to parameterize
+- track by detection
+  - match descriptors: HOG
+    - search in db, robust 3D pose calculation
+  - know obj category: detect independently, associate detections into tracks
+- online learning: current objecvt v.s. local bg
+  - gradual drift: avoid --> anchore with initial model
+- motion
+  - works when camera is stationary
+  - predict location, reduce noise, disambiguate multiple objects
+- multiple object traking: detection --> motion estimation --> initlal association --> association optimization
+  - similarity learning: binary or triplet loss, 
+  - bipartite matching for vanished/new objects

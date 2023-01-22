@@ -48,3 +48,13 @@ quiz
 - cypher lock all affected things for write
 - cypher shortestpath accepts single relationships
 - data warehouse is software
+
+clicker
+- DynamoDB: AP, not consistent but eventually consistent
+- namenode for directory, and datanode for files
+- xml 1.1 from 1.0: unicode, end of lines
+- xml entity reference: &apos, &#things
+- kv in HBase: smallest unit of storage, idxed by r, c, version, sharede by regions and col family
+- hbase fast? kv in memstore and cache, shortcircuiting
+- jsoniq: processes sequences of items
+- tree-like DF --> can store as parquet
