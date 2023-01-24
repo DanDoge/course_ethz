@@ -21,7 +21,7 @@
 - write concern in mongodb
   - check min. no. of nodes performed update
 
-- hdfs: flat storage file system? --> no hierarchy
+- hdfs: flat storage file system? --> no, hierarchy
   - optimized for batch processing? --> yes, per apache
   - read: addr of datanode sorted by proximity? --> yes
   - read: client signal read finished? --> no mention

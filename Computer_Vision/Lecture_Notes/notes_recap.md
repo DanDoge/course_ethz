@@ -91,6 +91,28 @@ structure from motion
   - many parameters, poor conditioning, lots of outliers, gauge freedom
   - robust error models --> outlier rejection
   - exploiting sparsity
+- robust model fitting
+  - m-estimator: min sum pho(residual; scale) --> critical scale
+  - ransac: small subset --> fit --> close to the fit: signal, others noise --> refit to signal
+    - choose n s.t. with prob. p, at least one sample is free from outliers
+      - 1 - p = (1 - (1 - e)^s)^n
+    - terminate when inlier ratio reaches expected ratio of inliers
+    - adaptively: recompuse N from e
+
+multiview stereo
+- B 7 Z = d / f --> d = - Bf / Z --> dd / dZ = bf / Z^2 --> dZ = Z^2 / Bf dd
+- search for correspondenses --> limited to epipolar line
+- challenges: ill posed inverse problem, uniform regions, occluded pixels
+  - consistency test, ordering constraint, uniqueness constraint
+- rectification: all epipolar lines are parallel, horizontal scanlines
+  - problem when epipole in/close to image
+- baselines: too small --> large depth error, too large: diffucult search problem, more occlusions
+- volumetric graph cut
+  - occlusion: get nearest point on outer surface, use outer surface fr occlusions, threshold on angle btw normal and viewing direction
+- space carving
+  - choose voxel, proejct and correlate, color if consistent: with depth ordering, visit occluders first
+    - always converge to a photo-consistnat model
+  - learn a photo hull: union of all photo-consistant scenes
 
 local features
 - require region extraction to be repeatabel and accurate
